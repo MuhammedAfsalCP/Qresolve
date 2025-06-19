@@ -6,8 +6,6 @@ from app.db.connection import db
 from app.models.ticket import TicketCreate, TicketUpdate
 from typing import Optional
 
-# === 🔐 USERS ===
-
 def get_user_by_email(email: str) -> Optional[dict]:
     return db.users.find_one({"email": email})
 
@@ -22,8 +20,6 @@ def update_user_verified(user_id: str):
         {"_id": ObjectId(user_id)},
         {"$set": {"is_verified": True}}
     )
-
-# === 🎫 TICKETS ===
 
 def create_ticket(ticket: TicketCreate):
     ticket_dict = ticket.dict()
@@ -49,9 +45,6 @@ def update_ticket(ticket_id: str, updates: TicketUpdate):
 
 def delete_ticket(ticket_id: str):
     return db.tickets.delete_one({"_id": ObjectId(ticket_id)})
-
-
-# === ⭐ FEEDBACK ===
 
 def submit_feedback(ticket_id: str, rating: int, comment: str = None):
     feedback_doc = {
