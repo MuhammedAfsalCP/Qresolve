@@ -4,9 +4,9 @@ from app.db import crud
 from bson import ObjectId
 from datetime import datetime
 
-router = APIRouter()
+router = APIRouter(prefix='/tickets')
 
-@router.post("/tickets", response_model=TicketInDB)
+@router.post("/create", response_model=TicketInDB)
 def create_ticket_endpoint(ticket: TicketCreate):
     result = crud.create_ticket(ticket)
 
@@ -22,3 +22,8 @@ def create_ticket_endpoint(ticket: TicketCreate):
         )
     else:
         raise HTTPException(status_code=500, detail="Ticket creation failed")
+
+
+# @router.get('/{user_id}',response_model=TicketInDB)
+# def fetch_tickets(user_id):
+#     pass
