@@ -41,7 +41,8 @@ def get_tickets_by_agent(agent_id: str):
 
 def update_ticket(ticket_id: str, updates: TicketUpdate):
     update_data = {k: v for k, v in updates.dict().items() if v is not None}
-    db.tickets.update_one({"_id": ObjectId(ticket_id)}, {"$set": update_data})
+    result = db.tickets.update_one({"_id": ObjectId(ticket_id)}, {"$set": update_data})
+    return result.modified_count
 
 def delete_ticket(ticket_id: str):
     return db.tickets.delete_one({"_id": ObjectId(ticket_id)})
