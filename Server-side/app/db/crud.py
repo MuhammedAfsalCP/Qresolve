@@ -1,5 +1,3 @@
-# app/db/crud.py
-
 from bson import ObjectId
 from datetime import datetime
 from app.db.connection import db
@@ -21,11 +19,10 @@ def update_user_verified(user_id: str):
         {"$set": {"is_verified": True}}
     )
 
-def create_ticket(ticket: TicketCreate):
-    ticket_dict = ticket.dict()
-    ticket_dict["created_at"] = datetime.utcnow()
-    ticket_dict["status"] = "open"
-    return db.tickets.insert_one(ticket_dict)
+def create_ticket(ticket: dict):
+    ticket["created_at"] = datetime.utcnow()
+    ticket["status"] = "open"
+    return db.tickets.insert_one(ticket)
 
 def get_ticket_by_id(ticket_id: str):
     return db.tickets.find_one({"_id": ObjectId(ticket_id)})
