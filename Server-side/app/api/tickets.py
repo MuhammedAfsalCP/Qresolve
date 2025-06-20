@@ -94,7 +94,7 @@ def get_tickets_by_id(ticket_id: str,user: dict = Depends(get_current_user)):
         return TicketInDB(**ticket)
     except Exception as e:
         raise HTTPException(
-            status_code=500, detail=f"Failed to retrieve tickets: {str(e)}"
+            status_code=500, detail=f"Failed to retriev tickets: {str(e)}"
         )
 
 
