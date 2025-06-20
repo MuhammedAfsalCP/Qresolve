@@ -41,7 +41,7 @@ export const Login = () => {
             >
                 <form
                     onSubmit={formik.handleSubmit}
-                    className="w-full max-w-md rounded-xl p-6 backdrop-blur-md bg-white/5 shadow-[0_8px_32px_0_rgba(255,255,255,0.2)] text-white flex flex-col gap-4"
+                    className="w-[90%] max-w-md min-h-[400px] p-6 rounded-xl backdrop-blur-md bg-white/5 shadow-[0_8px_32px_0_rgba(255,255,255,0.2)] text-white flex flex-col justify-center gap-4"
                 >
                     <h2 className="font-primary text-2xl md:text-3xl text-center opacity-80">LOGIN</h2>
                     <div className="w-full border-b-2 flex items-center gap-2">
