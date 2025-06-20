@@ -5,7 +5,7 @@ from bson import ObjectId
 from datetime import datetime
 from typing import List
 
-router = APIRouter(prefix='/tickets')
+router = APIRouter(prefix='/tickets',tags=["Tickets"])
 
 @router.post("/create", response_model=TicketInDB)
 def create_ticket_endpoint(ticket: TicketCreate):
