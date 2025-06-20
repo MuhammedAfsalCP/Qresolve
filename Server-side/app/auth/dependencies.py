@@ -8,7 +8,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     payload = verify_access_token(token)
     if not payload:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
-    return payload  # contains user_id and role
+    return payload  
 
 def require_role(role: str):
     def role_checker(payload: dict = Depends(get_current_user)):
