@@ -80,7 +80,7 @@ export const Login = () => {
                     <div className="w-full">
                         <button
                             type="submit"
-                            className="w-full py-2 bg-[#2A2A2A] text-lg font-primary rounded-md hover:cursor-pointer"
+                            className="w-full py-2 bg-[#2A2A2A] text-lg font-primary rounded-md hover:bg-[#3a3a3a] transition-colors duration-200 hover:scale-[1.02] cursor-pointer"
                         >
                             Login
                         </button>
@@ -135,10 +135,11 @@ export const Login = () => {
                         <div className="w-full">
                             <button
                                 type="submit"
-                                className="font-primary w-full py-2 bg-[#DEE6E9] text-lg hover:cursor-pointer rounded-md"
+                                className="font-primary w-full py-2 bg-[#DEE6E9] text-lg rounded-md hover:bg-[#cfd8db] transition-all duration-200 hover:scale-[1.02] cursor-pointer"
                             >
                                 Login
                             </button>
+
                         </div>
                         <div className="w-full text-center opacity-65 text-sm">
                             <h4>Don’t have an account? <span className="underline cursor-pointer">Register</span></h4>
