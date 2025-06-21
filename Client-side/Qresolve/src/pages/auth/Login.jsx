@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import toast from 'react-hot-toast';
 export const Login = () => {
     const isDark = useSelector((state) => state.dark.is_Dark)
     const navigate = useNavigate()
@@ -25,10 +25,10 @@ export const Login = () => {
         onSubmit: async (values) => {
             try {
                 const response = await axios.post(`${APIURL}/users/login`, values);
-                console.log("Login successful:", response.data);
+                toast.success('Login successfully!');
                 navigate('/')
             } catch (error) {
-                console.error("Login failed:", error.response?.data || error.message);
+                toast.error('Login failed.')
             }
         },
     });

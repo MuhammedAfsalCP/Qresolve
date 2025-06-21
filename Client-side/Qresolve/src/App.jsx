@@ -4,6 +4,7 @@ import AppRoutes from './routes/AppRoutes';
 import { FaSun, FaMoon } from 'react-icons/fa';
 import { SetDark } from './Redux/Slices/Darkslice';
 import { useDispatch, useSelector } from 'react-redux';
+import { Toaster } from 'react-hot-toast';
 function App() {
   const dispatch=useDispatch()
   const isDark = useSelector((state) => state.dark.is_Dark)
@@ -18,6 +19,7 @@ function App() {
           {isDark ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-gray-800" />}
         </button>
       </div>
+      <Toaster position="top-right" reverseOrder={false} />
       <BrowserRouter>
         <AppRoutes />
       </BrowserRouter>

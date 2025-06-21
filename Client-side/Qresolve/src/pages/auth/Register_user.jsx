@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import toast from 'react-hot-toast';
 export const Register_user = () => {
   const isDark = useSelector((state) => state.dark.is_Dark)
   const navigate = useNavigate()
@@ -39,10 +39,10 @@ export const Register_user = () => {
             password
           }
         );
-        console.log("Register successful:", response.data);
+        toast.success('Registered successfully!');
         navigate('/login')
       } catch (error) {
-        console.error("Register failed:", error.response?.data || error.message);
+        toast.error('Register failed.')
       }
     },
   });
