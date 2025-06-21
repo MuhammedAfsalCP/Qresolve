@@ -29,4 +29,4 @@ app.include_router(chat_ai.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to ITDeskPro API"}
+    return {"message": "Welcome to Qreslove API"}
