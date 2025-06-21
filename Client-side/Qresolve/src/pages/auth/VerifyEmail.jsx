@@ -4,21 +4,20 @@ import axios from 'axios';
 import bg_white from '../../assets/login-white.png';
 import bg_dark from '../../assets/login-dark.png';
 import { useSelector } from 'react-redux';
-
+import toast from 'react-hot-toast';
 const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
   const isDark = useSelector((state) => state.dark.is_Dark)
   const token = searchParams.get('token');
-  const [status, setStatus] = useState(null);
 const navigate=useNavigate()
   const handleVerify = async () => {
     try {
       const response = await axios.get(`https://qresolve.duckdns.org/users/verify?token=${token}`);
-      setStatus({ type: 'success', message: response.data.message || 'Email verified successfully!' });
+      toast.success('Email verified successfully!');
       navigate('/')
     } catch (error) {
         console.log(error)
-      setStatus({ type: 'error', message: error.response?.data?.detail || 'Verification failed.' });
+      toast.error('Verification failed.');
     }
   };
 
@@ -38,12 +37,6 @@ const navigate=useNavigate()
         >
           Verify Email
         </button>
-
-        {status && (
-          <div className={`mt-4 text-sm font-medium ${status.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-            {status.message}
-          </div>
-        )}
       </div>
     </div>:<div
       className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
@@ -59,12 +52,6 @@ const navigate=useNavigate()
         >
           Verify Email
         </button>
-
-        {status && (
-          <div className={`mt-4 text-sm font-medium ${status.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-            {status.message}
-          </div>
-        )}
       </div>
     </div>}
     </>
