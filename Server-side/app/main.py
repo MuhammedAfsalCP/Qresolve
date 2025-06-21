@@ -10,10 +10,13 @@ app = FastAPI(
     description="AI-powered IT Support Desk with Ticketing, Chat, and Automation.",
     version="1.0.0"
 )
-
+origins = [
+    "https://qresolve.vercel.app",  # ✅ your live frontend
+    "http://localhost:5173",        
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
