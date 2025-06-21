@@ -13,10 +13,11 @@ const VerifyEmail = () => {
 const navigate=useNavigate()
   const handleVerify = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/users/verify?token=${token}`);
+      const response = await axios.get(`https://qresolve.duckdns.org/users/verify?token=${token}`);
       setStatus({ type: 'success', message: response.data.message || 'Email verified successfully!' });
       navigate('/')
     } catch (error) {
+        console.log(error)
       setStatus({ type: 'error', message: error.response?.data?.detail || 'Verification failed.' });
     }
   };
