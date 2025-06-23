@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import { Register_user } from '../pages/auth/Register_user';
 import VerifyEmail from '../pages/auth/VerifyEmail';
-import { Login } from '../pages/auth/login';
+import { Login } from '../pages/auth/login'
 import { HeroSection } from '../pages/landing/HeroSection';
 
 const AppRoutes = () => {
