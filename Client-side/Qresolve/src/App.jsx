@@ -10,8 +10,8 @@ function App() {
   const isDark = useSelector((state) => state.dark.is_Dark)
   console.log(isDark)
   return (
-    <div className={`min-h-screen transition-all duration-500 ${isDark ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-<div className="fixed top-4 right-4 z-50">
+    <div className={`min-h-screen transition-all duration-500 ${isDark ? 'bg-black text-white' : 'bg-white text-black'}`}>
+<div className="fixed top-4 right-15 z-50">
         <button
           onClick={() => dispatch(SetDark())}
           className="p-2 rounded-full shadow-lg bg-gray-200 hover:scale-105 transition-transform duration-300"
