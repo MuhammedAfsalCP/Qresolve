@@ -2,6 +2,7 @@ import React from 'react'
 import Nav from '../../components/Nav'
 import { FaArrowDown } from "react-icons/fa";
 import { useSelector } from 'react-redux';
+import AiChatBox from '../Chat/AiChatBox';
 export const HeroSection = () => {
     const isDark = useSelector((state) => state.dark.is_Dark)
     return (
@@ -59,6 +60,9 @@ transition-all duration-300 ease-in-out font-primary
                                 <FaArrowDown className='text-xl' />
                             </div>
                         </div>
+                        <div className="min-h-screen bg-gray-900 text-white p-4">
+      <AiChatBox />
+    </div>
                     </div>
                 </div>
             </div>}
