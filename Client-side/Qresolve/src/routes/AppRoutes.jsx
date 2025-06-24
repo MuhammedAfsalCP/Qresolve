@@ -13,6 +13,7 @@ const AppRoutes = () => {
             <Route path="/verify-email" element={<VerifyEmail />} />
             <Route path="/register" element={<Register_user />} />
             <Route path="*" element={<div>404 - Page Not Found</div>} />
+            {/* <Route path='/create-ticket' element={<CreateTickets/>}/> */}
         </Routes>
     );
 };
