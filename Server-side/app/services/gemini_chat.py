@@ -1,32 +1,18 @@
-import os 
-import httpx
-from dotenv import load_dotenv
+# app/services/gemini_service.py
+import os
+import google.generativeai as genai
+from google.generativeai import types
 
-load_dotenv()
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+# Configure Gemini API
+# Ensure your API key is loaded securely from environment variables
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
-async def get_gemini_response(prompt:str) -> str:
-    if not GEMINI_API_KEY:
-        raise ValueError("GEMINI_API_KEY not set")
-    
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
-    headers = {
-    "Content-Type": "application/json",
-    "x-goog-api-key": GEMINI_API_KEY
-    }
-    payload = {
-        "contents": [{
-            "parts": [{"text": prompt}]
-        }]
-    }
-    async with httpx.AsyncClient() as client:
-        response = await client.post(url, headers=headers, json=payload)
-        response.raise_for_status()  # Raise if error (like 400/500)
-
-    data = response.json()
-
-    # Extract Gemini's reply
+def get_gemini_response(prompt: str) -> str:
     try:
-        return data["candidates"][0]["content"]["parts"][0]["text"]
-    except (KeyError, IndexError):
-        return "Sorry, I couldn't understand your request. Please rephrase."
+        model = genai.GenerativeModel('gemini-1.5-flash') # Or 'gemini-1.5-flash', etc.
+        chat = model.start_chat(history=[])
+        response = chat.send_message(prompt)
+        return response.text
+    except Exception as e:
+        print(f"Error calling Gemini API: {e}")
+        return f"Error: Could not get response from AI. {e}"
