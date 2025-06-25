@@ -3,31 +3,35 @@ from app.models.ticket import TicketCreate, TicketInDB, TicketUpdate
 from fastapi import Depends
 from app.auth.dependencies import get_current_user
 from app.db import crud
+from app.db.connection import db
 from bson import ObjectId
 from datetime import datetime
 from typing import List
-
+from app.core.ai_classifier import classify_department
 router = APIRouter(prefix="/tickets", tags=["Tickets"])
 
 
 @router.post("/create", response_model=TicketInDB)
-def create_ticket(
-    ticket: TicketCreate, user: dict = Depends(get_current_user)
-):
+def create_ticket(ticket: TicketCreate, user: dict = Depends(get_current_user)):
     if user["role"] != "user":
         raise HTTPException(status_code=403, detail="Only users can create tickets")
+    department = classify_department(ticket.description)
+    agent = crud.get_random_available_agent(department)
+    agent_id = str(agent["_id"]) if agent else None
+    if agent:
+        db.users.update_one({"_id": agent["_id"]}, {"$set": {"is_available": False}})
     ticket_updated = {
         "title": ticket.title,
         "description": ticket.description,
         "priority": ticket.priority,
         "user_id": user["user_id"],
+        "department": department,
         "created_at": datetime.utcnow(),
         "status": "open",
-        "agent_id": None,
+        "agent_id": agent_id
     }
 
     result = crud.create_ticket(ticket_updated)
-    
 
     if result.inserted_id:
         return TicketInDB(
@@ -37,11 +41,12 @@ def create_ticket(
             priority=ticket.priority,
             user_id=user["user_id"],
             created_at=datetime.utcnow(),
-            status="open"
+            status="open",
+            department=department,
+            agent_id=agent_id
         )
     else:
         raise HTTPException(status_code=500, detail="Ticket creation failed")
-
 
 @router.get("/all", response_model=List[TicketInDB])
 def get_all_tickets(user: dict = Depends(get_current_user)):
