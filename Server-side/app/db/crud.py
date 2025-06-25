@@ -3,6 +3,7 @@ from datetime import datetime
 from app.db.connection import db
 from app.models.ticket import TicketCreate, TicketUpdate
 from typing import Optional
+import random
 
 def get_user_by_email(email: str) -> Optional[dict]:
     return db.users.find_one({"email": email})
@@ -55,3 +56,12 @@ def submit_feedback(ticket_id: str, rating: int, comment: str = None):
 
 def get_feedback_by_ticket(ticket_id: str):
     return db.feedback.find_one({"ticket_id": ObjectId(ticket_id)})
+
+def get_random_available_agent(department: str):
+    agents = list(db.users.find({
+        "role": "agent",
+        "is_verified": True,
+        "is_available": True,
+        "department": department
+    }))
+    return random.choice(agents) if agents else None

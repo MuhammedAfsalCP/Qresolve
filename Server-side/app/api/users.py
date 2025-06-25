@@ -22,6 +22,7 @@ from app.auth.jwt import (
     create_refresh_token,
     verify_verification_token,
 )
+from app.auth.dependencies import get_current_user
 from app.services.notify import send_verification_email
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -148,3 +149,9 @@ def login_user_json(payload: LoginRequest, response: Response):
     response.set_cookie(key="access_token", value=access_token, httponly=True)
     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+
+@router.get("/me")
+def get_my_profile(user: dict = Depends(get_current_user)):
+    return {"user_id": user["user_id"], "role": user["role"]}
