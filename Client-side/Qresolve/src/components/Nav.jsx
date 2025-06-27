@@ -44,9 +44,9 @@ const Nav = () => {
                         </ul>
                     </div>
                     <div className='w-[28%] h-full flex items-center justify-around mr-5'>
-                        <button onClick={()=>navigate('/login')} className={`font-primary text-l w-[30%] rounded-md h-[60%] transition-all duration-300 ease-in-out 
+                        <button onClick={() => navigate('/login')} className={`font-primary text-l w-[30%] rounded-md h-[60%] transition-all duration-300 ease-in-out 
               ${isDark ? 'hover:bg-white hover:text-black' : 'hover:bg-black hover:text-white'}`}>LOGIN</button>
-                        <button onClick={()=>navigate('/register')} className={`font-primary text-l w-[60%] rounded-md h-[60%] transition-all duration-300 ease-in-out 
+                        <button onClick={() => navigate('/register')} className={`font-primary text-l w-[60%] rounded-md h-[60%] transition-all duration-300 ease-in-out 
               ${isDark ? 'hover:bg-white hover:text-black' : 'hover:bg-black hover:text-white'}`}>GET STARTED</button>
                     </div>
                 </div>
@@ -62,9 +62,9 @@ const Nav = () => {
                         <li className="cursor-pointer hover:scale-[1.05]">CONTACT US</li>
                     </ul>
                     <div className='flex flex-col gap-2 w-full mt-4'>
-                        <button onClick={()=>navigate('/login')} className={`font-primary text-l w-full py-2 rounded-md transition-all duration-300 ease-in-out 
+                        <button onClick={() => navigate('/login')} className={`font-primary text-l w-full py-2 rounded-md transition-all duration-300 ease-in-out 
               ${isDark ? 'bg-white text-black' : 'bg-black text-white'}`}>LOGIN</button>
-                        <button onClick={()=>navigate('/register')} className={`font-primary text-l w-full py-2 rounded-md transition-all duration-300 ease-in-out 
+                        <button onClick={() => navigate('/register')} className={`font-primary text-l w-full py-2 rounded-md transition-all duration-300 ease-in-out 
               ${isDark ? 'bg-white text-black' : 'bg-black text-white'}`}>GET STARTED</button>
                     </div>
                 </div>

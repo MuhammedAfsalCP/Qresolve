@@ -11,7 +11,7 @@ app = FastAPI(
     version="1.0.0"
 )
 origins = [
-    "https://qresolve.vercel.app",  # ✅ your live frontend
+    "https://qresolve.vercel.app",
     "http://localhost:5173",        
 ]
 app.add_middleware(
