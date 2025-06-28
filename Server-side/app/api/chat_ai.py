@@ -6,8 +6,6 @@ router = APIRouter()
 
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
-    # ❌ Don't call this here
-    # await websocket.accept()  ← REMOVE this line!
 
     user_id = "anon-user"
     await manager.connect(websocket, user_id)
