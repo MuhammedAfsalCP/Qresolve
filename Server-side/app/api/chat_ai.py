@@ -2,7 +2,7 @@ from fastapi import APIRouter, WebSocket, status
 from app.services.websocket_manager import manager
 from app.services.gemini_chat import get_gemini_response
 
-router = APIRouter()
+router = APIRouter(prefix="/Chat-Bot", tags=["Chat-Bot"])
 
 @router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -11,7 +11,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket, user_id)
 
     try:
-        await manager.send_personal_message("👋 Hello! I'm Gemini AI. Ask me anything.", websocket)
+        await manager.send_personal_message("👋 Hello! I' Gemini AI. Ask me anything.", websocket)
 
         while True:
             user_input = await websocket.receive_text()
