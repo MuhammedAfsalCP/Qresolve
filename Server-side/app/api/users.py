@@ -1,17 +1,34 @@
 # app/api/users.py
 
-from fastapi import APIRouter, HTTPException, Depends,Response,Query
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Depends,
+    Response,
+    Query,
+    Form,
+    UploadFile,
+    File,
+)
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import JWTError
 from passlib.context import CryptContext
-from app.models.user import UserCreate, UserPublic,LoginRequest
+from app.models.user import UserCreate, UserPublic, LoginRequest
+from app.utils.cloudinary_upload import upload_certificate
 from app.models.auth import Token
 from app.db import crud
-from app.auth.jwt import create_access_token,create_refresh_token,verify_verification_token
+from app.auth.jwt import (
+    create_access_token,
+    create_refresh_token,
+    verify_verification_token,
+)
+from app.auth.dependencies import get_current_user
 from app.services.notify import send_verification_email
+
 router = APIRouter(prefix="/users", tags=["Users"])
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 
 @router.post("/register-user", response_model=UserPublic)
 async def register_user(user: UserCreate):
@@ -25,35 +42,58 @@ async def register_user(user: UserCreate):
         "email": user.email,
         "hashed_password": hashed_password,
         "role": "user",
-        "is_verified": False
+        "is_verified": False,
+        "is_available": False,
     }
 
     created = crud.create_user(user_dict)
     user_id = str(created.inserted_id)
     token = create_access_token({"user_id": user_id})
     await send_verification_email(user.email, token)
-    return UserPublic(id=str(created.inserted_id), name=user.name, email=user.email, role="user")
+    return UserPublic(
+        id=str(created.inserted_id), name=user.name, email=user.email, role="user"
+    )
+
 
 @router.post("/register-agent", response_model=UserPublic)
-async def register_agent(user: UserCreate):
-    existing = crud.get_user_by_email(user.email)
+async def register_agent(
+    name: str = Form(...),
+    email: str = Form(...),
+    password: str = Form(...),
+    department: str = Form(None),
+    certificate: UploadFile = File(None),
+):
+    existing = crud.get_user_by_email(email)
     if existing:
         raise HTTPException(status_code=400, detail="User already exists")
 
-    hashed_password = pwd_context.hash(user.password)
+    hashed_password = pwd_context.hash(password)
+    certificate_url = None
+    if certificate:
+        certificate_url = upload_certificate(certificate.file)
+
     agent_dict = {
-        "name": user.name,
-        "email": user.email,
+        "name": name,
+        "email": email,
         "hashed_password": hashed_password,
         "role": "agent",
-        "is_verified": False
+        "is_verified": False,
+        "is_available": True,
+        "department": department,
+        "certificate_url": certificate_url,
     }
 
     created = crud.create_user(agent_dict)
     user_id = str(created.inserted_id)
-    token = create_access_token({"user_id": user_id})
-    await send_verification_email(user.email, token)
-    return UserPublic(id=str(created.inserted_id), name=user.name, email=user.email, role="agent")
+
+    return UserPublic(
+        id=user_id,
+        name=name,
+        email=email,
+        role="agent",
+        certificate_url=certificate_url,
+    )
+
 
 @router.post("/register-admin", response_model=UserPublic)
 async def register_admin(user: UserCreate):
@@ -67,14 +107,19 @@ async def register_admin(user: UserCreate):
         "email": user.email,
         "hashed_password": hashed_password,
         "role": "admin",
-        "is_verified": False
+        "is_verified": False,
+        "is_available": False,
     }
 
     created = crud.create_user(admin_dict)
     user_id = str(created.inserted_id)
     token = create_access_token({"user_id": user_id})
     await send_verification_email(user.email, token)
-    return UserPublic(id=str(created.inserted_id), name=user.name, email=user.email, role="admin")
+    return UserPublic(
+        id=str(created.inserted_id), name=user.name, email=user.email, role="admin"
+    )
+
+
 @router.get("/verify")
 def verify_email(token: str = Query(...)):
     try:
@@ -88,20 +133,25 @@ def verify_email(token: str = Query(...)):
 
     except JWTError:
         raise HTTPException(status_code=400, detail="Invalid or expired token")
+
+
 @router.post("/login", response_model=Token)
-def login_user_json(payload: LoginRequest,response: Response):
+def login_user_json(payload: LoginRequest, response: Response):
     user = crud.get_user_by_email(payload.email)
     if not user or not pwd_context.verify(payload.password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token_data = {
-        "user_id": str(user["_id"]),
-        "role": user["role"]
-    }
+    token_data = {"user_id": str(user["_id"]), "role": user["role"]}
 
     access_token = create_access_token(token_data)
     refresh_token = create_refresh_token(token_data)
 
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    response.set_cookie(key="access_token", value=access_token, httponly=False)
     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+
+@router.get("/me")
+def get_my_profile(user: dict = Depends(get_current_user)):
+    return {"user_id": user["user_id"], "role": user["role"]}

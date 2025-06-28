@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import toast from 'react-hot-toast';
 export const Login = () => {
     const isDark = useSelector((state) => state.dark.is_Dark)
     const navigate = useNavigate()
@@ -25,10 +25,10 @@ export const Login = () => {
         onSubmit: async (values) => {
             try {
                 const response = await axios.post(`${APIURL}/users/login`, values);
-                console.log("Login successful:", response.data);
+                toast.success('Login successfully!');
                 navigate('/')
             } catch (error) {
-                console.error("Login failed:", error.response?.data || error.message);
+                toast.error('Login failed.')
             }
         },
     });
@@ -41,7 +41,7 @@ export const Login = () => {
             >
                 <form
                     onSubmit={formik.handleSubmit}
-                    className="w-full max-w-md rounded-xl p-6 backdrop-blur-md bg-white/5 shadow-[0_8px_32px_0_rgba(255,255,255,0.2)] text-white flex flex-col gap-4"
+                    className="w-[90%] max-w-md min-h-[400px] p-6 rounded-xl backdrop-blur-md bg-white/5 shadow-[0_8px_32px_0_rgba(255,255,255,0.2)] text-white flex flex-col justify-center gap-4"
                 >
                     <h2 className="font-primary text-2xl md:text-3xl text-center opacity-80">LOGIN</h2>
                     <div className="w-full border-b-2 flex items-center gap-2">
@@ -80,7 +80,7 @@ export const Login = () => {
                     <div className="w-full">
                         <button
                             type="submit"
-                            className="w-full py-2 bg-[#2A2A2A] text-lg font-primary rounded-md hover:cursor-pointer"
+                            className="w-full py-2 bg-[#2A2A2A] text-lg font-primary rounded-md hover:bg-[#3a3a3a] transition-colors duration-200 hover:scale-[1.02] cursor-pointer"
                         >
                             Login
                         </button>
@@ -135,10 +135,11 @@ export const Login = () => {
                         <div className="w-full">
                             <button
                                 type="submit"
-                                className="font-primary w-full py-2 bg-[#DEE6E9] text-lg hover:cursor-pointer rounded-md"
+                                className="font-primary w-full py-2 bg-[#DEE6E9] text-lg rounded-md hover:bg-[#cfd8db] transition-all duration-200 hover:scale-[1.02] cursor-pointer"
                             >
                                 Login
                             </button>
+
                         </div>
                         <div className="w-full text-center opacity-65 text-sm">
                             <h4>Don’t have an account? <span className="underline cursor-pointer">Register</span></h4>

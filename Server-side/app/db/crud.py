@@ -1,10 +1,9 @@
-# app/db/crud.py
-
 from bson import ObjectId
 from datetime import datetime
 from app.db.connection import db
 from app.models.ticket import TicketCreate, TicketUpdate
 from typing import Optional
+import random
 
 def get_user_by_email(email: str) -> Optional[dict]:
     return db.users.find_one({"email": email})
@@ -21,11 +20,10 @@ def update_user_verified(user_id: str):
         {"$set": {"is_verified": True}}
     )
 
-def create_ticket(ticket: TicketCreate):
-    ticket_dict = ticket.dict()
-    ticket_dict["created_at"] = datetime.utcnow()
-    ticket_dict["status"] = "open"
-    return db.tickets.insert_one(ticket_dict)
+def create_ticket(ticket: dict):
+    ticket["created_at"] = datetime.utcnow()
+    ticket["status"] = "open"
+    return db.tickets.insert_one(ticket)
 
 def get_ticket_by_id(ticket_id: str):
     return db.tickets.find_one({"_id": ObjectId(ticket_id)})
@@ -41,7 +39,8 @@ def get_tickets_by_agent(agent_id: str):
 
 def update_ticket(ticket_id: str, updates: TicketUpdate):
     update_data = {k: v for k, v in updates.dict().items() if v is not None}
-    db.tickets.update_one({"_id": ObjectId(ticket_id)}, {"$set": update_data})
+    result = db.tickets.update_one({"_id": ObjectId(ticket_id)}, {"$set": update_data})
+    return result.modified_count
 
 def delete_ticket(ticket_id: str):
     return db.tickets.delete_one({"_id": ObjectId(ticket_id)})
@@ -57,3 +56,12 @@ def submit_feedback(ticket_id: str, rating: int, comment: str = None):
 
 def get_feedback_by_ticket(ticket_id: str):
     return db.feedback.find_one({"ticket_id": ObjectId(ticket_id)})
+
+def get_random_available_agent(department: str):
+    agents = list(db.users.find({
+        "role": "agent",
+        "is_verified": True,
+        "is_available": True,
+        "department": department
+    }))
+    return random.choice(agents) if agents else None
