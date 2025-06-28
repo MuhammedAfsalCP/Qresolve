@@ -8,3 +8,4 @@ client = MongoClient(MONGO_URI)
 
 db = client["qresolve"]
 
+knowledge_base_collection = db["knowledge_base"]
