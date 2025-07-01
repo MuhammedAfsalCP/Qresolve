@@ -9,6 +9,7 @@ from fastapi import (
     Form,
     UploadFile,
     File,
+    status
 )
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import JWTError
@@ -136,22 +137,53 @@ def verify_email(token: str = Query(...)):
 
 
 @router.post("/login", response_model=Token)
-def login_user_json(payload: LoginRequest, response: Response):
+def login_user(payload: LoginRequest, response: Response):
+    # ✅ Step 1: Get user by email
     user = crud.get_user_by_email(payload.email)
     if not user or not pwd_context.verify(payload.password, user["hashed_password"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid credentials"
+        )
 
-    token_data = {"user_id": str(user["_id"]), "role": user["role"]}
+    # ✅ Step 2: Create token data
+    token_data = {
+        "user_id": str(user["_id"]),
+        "role": user["role"]
+    }
 
+    # ✅ Step 3: Generate tokens
     access_token = create_access_token(token_data)
     refresh_token = create_refresh_token(token_data)
 
-    response.set_cookie(key="access_token", value=access_token, httponly=True)
-    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
-    return {"access_token": access_token, "token_type": "bearer"}
+    # ✅ Step 4: Set tokens as HttpOnly cookies
+    response.set_cookie(
+        key="access_token",
+        value=access_token,
+        httponly=True,
+        secure=False,             # set True if using HTTPS
+        samesite="Lax",           # or "None" if cross-site
+        max_age=60 * 60           # optional: 1 hour
+    )
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=False,
+        samesite="Lax",
+        max_age=7 * 24 * 60 * 60  # optional: 7 days
+    )
 
-
+    # ✅ Step 5: Also return token in body (optional)
+    return {
+        "access_token": access_token,
+        "token_type": "bearer"
+    }
 
 @router.get("/me")
 def get_my_profile(user: dict = Depends(get_current_user)):
     return {"user_id": user["user_id"], "role": user["role"]}
+
+@router.get("/ws-token")
+def get_ws_token(user: dict = Depends(get_current_user)):
+    return {"token": create_access_token(user)}
