@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-
+import Nav from '../../components/Nav'
 const AiChat = () => {
   const socketRef = useRef(null);
   const [messages, setMessages] = useState([]);
@@ -112,60 +112,60 @@ const AiChat = () => {
       codeBuffer = [];
     };
 
- lines.forEach((line, index) => {
-  if (line.trim().startsWith("```")) {
-    isCodeBlock = !isCodeBlock;
-    if (!isCodeBlock) flushCode(index);
-  } else if (
-    isCodeBlock ||
-    /^[ \t]*(def |class |if |else|import|print|return|for |while|try|except)/.test(line)
-  ) {
-    codeBuffer.push(line);
-  } else if (/^ {2,}/.test(line)) {
-    codeBuffer.push(line);
-  } else {
-    flushCode(index);
-    const trimmed = line.trim();
+    lines.forEach((line, index) => {
+      if (line.trim().startsWith("```")) {
+        isCodeBlock = !isCodeBlock;
+        if (!isCodeBlock) flushCode(index);
+      } else if (
+        isCodeBlock ||
+        /^[ \t]*(def |class |if |else|import|print|return|for |while|try|except)/.test(line)
+      ) {
+        codeBuffer.push(line);
+      } else if (/^ {2,}/.test(line)) {
+        codeBuffer.push(line);
+      } else {
+        flushCode(index);
+        const trimmed = line.trim();
 
-    // ✅ Handle bullet points with bold text: * **text**
-    const bulletMatch = /^\*\s+\*\*(.*?)\*\*:?\s*$/.exec(trimmed);
-    if (bulletMatch) {
-      result.push(
-        <div key={`bullet-${index}`} className="pl-4 list-disc list-inside font-semibold">
-          • {bulletMatch[1]}
-        </div>
-      );
-      return;
-    }
+        // ✅ Handle bullet points with bold text: * **text**
+        const bulletMatch = /^\*\s+\*\*(.*?)\*\*:?\s*$/.exec(trimmed);
+        if (bulletMatch) {
+          result.push(
+            <div key={`bullet-${index}`} className="pl-4 list-disc list-inside font-semibold">
+              • {bulletMatch[1]}
+            </div>
+          );
+          return;
+        }
 
-    // ✅ Handle numbered bold items: 1. **text**
-    const numberedMatch = /^\d+\.\s+\*\*(.*?)\*\*:?\s*$/.exec(trimmed);
-    if (numberedMatch) {
-      result.push(
-        <div key={`numbered-${index}`} className="pl-4 list-decimal list-inside font-semibold">
-          {`${trimmed.split(".")[0]}. ${numberedMatch[1]}`}
-        </div>
-      );
-      return;
-    }
+        // ✅ Handle numbered bold items: 1. **text**
+        const numberedMatch = /^\d+\.\s+\*\*(.*?)\*\*:?\s*$/.exec(trimmed);
+        if (numberedMatch) {
+          result.push(
+            <div key={`numbered-${index}`} className="pl-4 list-decimal list-inside font-semibold">
+              {`${trimmed.split(".")[0]}. ${numberedMatch[1]}`}
+            </div>
+          );
+          return;
+        }
 
-    // ✅ Handle just bold text (not part of list)
-    if (trimmed.startsWith("**") && trimmed.endsWith("**")) {
-      result.push(
-        <strong key={`bold-${index}`} className="text-lg font-bold">
-          {trimmed.slice(2, -2)}
-        </strong>
-      );
-    } else {
-      // ✅ Default plain line
-      result.push(
-        <pre key={`text-${index}`} className="whitespace-pre-wrap">
-          {line}
-        </pre>
-      );
-    }
-  }
-});
+        // ✅ Handle just bold text (not part of list)
+        if (trimmed.startsWith("**") && trimmed.endsWith("**")) {
+          result.push(
+            <strong key={`bold-${index}`} className="text-lg font-bold">
+              {trimmed.slice(2, -2)}
+            </strong>
+          );
+        } else {
+          // ✅ Default plain line
+          result.push(
+            <pre key={`text-${index}`} className="whitespace-pre-wrap">
+              {line}
+            </pre>
+          );
+        }
+      }
+    });
 
 
 
@@ -175,9 +175,10 @@ const AiChat = () => {
 
   return (
     <div className={`min-h-screen flex flex-col items-center justify-start p-4 ${isDark ? "bg-[#000] text-white" : "bg-gray-100 text-black"}`}>
-      <div className="w-full max-w-2xl flex flex-col h-[80vh] border rounded-lg shadow-lg overflow-hidden">
+      <Nav/>
+      <div className="w-full max-w-6xl flex flex-col h-[80vh] shadow-lg overflow-hidden">
         {/* Header */}
-        <div className={`p-4 border-b ${isDark ? "bg-gray-800" : "bg-white"}`}>
+        <div className={`p-4`}>
           <h2 className="text-xl font-bold">💬 AI Chat</h2>
         </div>
 
@@ -189,9 +190,11 @@ const AiChat = () => {
               className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[70%] px-4 py-2 rounded-lg ${
-                  msg.sender === "user" ? "bg-[#5f96ef] text-white" : "bg-gray-700 text-white"
-                }`}
+                className={`max-w-[70%] px-4 py-2 rounded-lg shadow-2xl 
+          ${msg.sender === "user"
+                    ? "bg-[#595959] text-white"
+                    : "bg-[#2a292a] text-white border border-gray-300"}`
+                }
               >
                 {renderMessage(msg.text)}
               </div>
@@ -199,6 +202,7 @@ const AiChat = () => {
           ))}
           <div ref={scrollRef} />
         </div>
+
 
         {/* Input */}
         <form onSubmit={handleSubmit} className="flex items-center p-4 border-t">
