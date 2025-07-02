@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from app.api import auth, users, agents, admin, chat, tickets, chat_ai, knowledge_base
+from app.api import auth, users, agents, admin, chat, tickets, chat_ai, knowledge_base,chat
 from app.utils.faiss_store import build_index  # ✅ Added to load FAISS index
 
 load_dotenv()
@@ -34,7 +34,7 @@ app.include_router(chat_ai.router)
 # app.include_router(agents.router)
 # app.include_router(admin.router)
 app.include_router(knowledge_base.router)
-# app.include_router(chat.router)
+app.include_router(chat.router)
 
 # ✅ Trigger FAISS index build on app startup
 @app.on_event("startup")

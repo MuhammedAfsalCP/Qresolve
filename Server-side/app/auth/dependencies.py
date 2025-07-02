@@ -1,10 +1,11 @@
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, status, Request,WebSocket
 from fastapi.security import OAuth2PasswordBearer
 from app.auth.jwt import verify_access_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/token")
 
 def get_current_user(request: Request, token: str = Depends(oauth2_scheme)):
+    # Prefer cookie token if available
     cookie_token = request.cookies.get("access_token")
     final_token = cookie_token or token
 
@@ -16,6 +17,18 @@ def get_current_user(request: Request, token: str = Depends(oauth2_scheme)):
         )
 
     return verify_access_token(final_token)
+async def get_current_user_ws(websocket: WebSocket):
+    await websocket.accept()
+    token = websocket.cookies.get("access_token")
+    if not token:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return None
+
+    try:
+        return verify_access_token(token)
+    except Exception:
+        await websocket.close(code=status.WS_1008_POLICY_VIOLATION)
+        return None
 
 def require_role(role: str):
     def role_checker(payload: dict = Depends(get_current_user)):
