@@ -158,6 +158,7 @@ def login_user(payload: LoginRequest, response: Response):
 
     # ✅ Step 4: Set tokens as HttpOnly cookies
     response.set_cookie(key="access_token", value=access_token, httponly=True)
+
     response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
 
     # ✅ Step 5: Also return token in body (optional)

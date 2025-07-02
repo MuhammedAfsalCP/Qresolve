@@ -24,3 +24,4 @@ async def websocket_endpoint(websocket: WebSocket):
         print(f"❗ Error with {user_id}: {e}")
     finally:
         manager.disconnect(websocket)
+
