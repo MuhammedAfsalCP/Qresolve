@@ -1,4 +1,4 @@
-# app/services/gemini_service.py
+# app/services/gemini_chat.py
 import os
 import google.generativeai as genai
 from google.generativeai import types

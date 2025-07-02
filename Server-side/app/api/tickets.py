@@ -131,3 +131,22 @@ def delete_ticket_view(ticket_id: str,user: dict = Depends(get_current_user)):
         raise HTTPException(status_code=404, detail="Ticket not found")
 
     return {"message": "Ticket deleted successfully"}
+
+@router.get("/agent", response_model=List[TicketInDB])
+def get_agent_tickets(user: dict = Depends(get_current_user)):
+    if user["role"] != "agent":
+        raise HTTPException(status_code=403, detail="Only agent can get tickets")
+
+    try:
+        print(user)
+        tickets = crud.get_tickets_by_user(user["user_id"])
+        ticket_list = []
+        for t in tickets:
+            t["id"] = str(t["_id"])
+            del t["_id"]
+            ticket_list.append(TicketInDB(**t))
+        return ticket_list
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, detail=f"Failed to retrieve tickets: {str(e)}"
+        )

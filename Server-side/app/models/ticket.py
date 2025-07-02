@@ -18,3 +18,6 @@ class TicketInDB(TicketCreate):
     created_at: datetime
     status: Literal["cancelled", "processing", "completed","open"]
     agent_id: Optional[str]  = None
+
+
+
