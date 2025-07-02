@@ -157,22 +157,8 @@ def login_user(payload: LoginRequest, response: Response):
     refresh_token = create_refresh_token(token_data)
 
     # ✅ Step 4: Set tokens as HttpOnly cookies
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        secure=False,             # set True if using HTTPS
-        samesite="Lax",           # or "None" if cross-site
-        max_age=60 * 60           # optional: 1 hour
-    )
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        httponly=True,
-        secure=False,
-        samesite="Lax",
-        max_age=7 * 24 * 60 * 60  # optional: 7 days
-    )
+    response.set_cookie(key="access_token", value=access_token, httponly=True)
+    response.set_cookie(key="refresh_token", value=refresh_token, httponly=True)
 
     # ✅ Step 5: Also return token in body (optional)
     return {
